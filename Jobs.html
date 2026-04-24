@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Job Listings – CareerBridgeAI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --cream: #FAF7F2; --tan: #E8DFD0; --tan-dark: #C9B99A;
+  --purple: #5B3FA6; --purple-light: #7B5BC6; --purple-pale: #EDE8F8;
+  --yellow: #F5C842; --yellow-light: #FDF3C0;
+  --charcoal: #1E1A2E; --text-muted: #7A7087; --white: #FFFFFF;
+  --green: #22C55E; --green-light: #DCFCE7; --sidebar-w: 240px;
+  --red: #EF4444; --red-light: #FEE2E2;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); display: flex; min-height: 100vh; }
+.sidebar { width: var(--sidebar-w); min-height: 100vh; background: var(--charcoal); position: fixed; left: 0; top: 0; bottom: 0; display: flex; flex-direction: column; padding: 28px 0; z-index: 50; }
+.sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 22px 28px; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: white; text-decoration: none; white-space: nowrap; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.logo-dot { width: 26px; height: 26px; border-radius: 7px; background: var(--purple); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.logo-dot svg { width: 14px; height: 14px; }
+.sidebar-section { padding: 22px 14px 8px; }
+.sidebar-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.3); padding: 0 8px; margin-bottom: 6px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.2s; margin-bottom: 2px; text-decoration: none; }
+.nav-item svg { width: 17px; height: 17px; flex-shrink: 0; opacity: 0.7; }
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+.nav-item.active { background: var(--purple); color: white; }
+.nav-item.active svg { opacity: 1; }
+.nav-badge { margin-left: auto; background: var(--yellow); color: var(--charcoal); border-radius: 50px; font-size: 0.68rem; font-weight: 700; padding: 2px 8px; }
+.sidebar-bottom { margin-top: auto; padding: 16px 14px; border-top: 1px solid rgba(255,255,255,0.07); }
+.user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; }
+.user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), var(--purple-light)); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.78rem; color: white; flex-shrink: 0; }
+.user-info .name { font-size: 0.85rem; font-weight: 500; color: white; }
+.user-info .role { font-size: 0.73rem; color: rgba(255,255,255,0.4); }
+
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; max-width: calc(100vw - var(--sidebar-w)); }
+.topbar { padding: 20px 32px; border-bottom: 1px solid rgba(91,63,166,0.1); background: var(--white); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.search-bar { display: flex; align-items: center; gap: 10px; background: var(--cream); border: 1.5px solid var(--tan); border-radius: 12px; padding: 10px 16px; flex: 1; max-width: 440px; }
+.search-bar svg { width: 17px; height: 17px; color: var(--text-muted); flex-shrink: 0; }
+.search-bar input { border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--charcoal); outline: none; flex: 1; }
+.search-bar input::placeholder { color: var(--text-muted); }
+.topbar-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.btn-link { padding: 8px 16px; border-radius: 10px; border: 1.5px solid var(--tan); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; color: var(--text-muted); cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; }
+.btn-link:hover { border-color: var(--purple); color: var(--purple); }
+
+.body-layout { display: flex; flex: 1; min-height: 0; }
+.filters-panel { width: 240px; flex-shrink: 0; padding: 24px 20px; border-right: 1px solid rgba(91,63,166,0.1); background: var(--white); overflow-y: auto; }
+.filter-group { margin-bottom: 22px; }
+.filter-group-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--charcoal); margin-bottom: 10px; }
+.checkbox-item { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.checkbox-item input[type=checkbox] { accent-color: var(--purple); width: 15px; height: 15px; cursor: pointer; }
+.checkbox-item label { font-size: 0.83rem; color: var(--charcoal); cursor: pointer; flex: 1; }
+.filter-divider { height: 1px; background: var(--tan); margin: 4px 0 16px; }
+
+.jobs-area { flex: 1; padding: 24px 28px; overflow-y: auto; }
+.jobs-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.jobs-count { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: var(--charcoal); }
+.jobs-count span { color: var(--text-muted); font-weight: 400; font-size: 0.85rem; margin-left: 6px; }
+
+.ai-banner { background: linear-gradient(135deg, var(--charcoal), #2D1F5E); border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; }
+.ai-banner-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--purple); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ai-banner-icon svg { width: 20px; height: 20px; }
+.ai-banner-text .t { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; color: white; }
+.ai-banner-text .s { font-size: 0.78rem; color: rgba(255,255,255,0.55); margin-top: 2px; }
+.ai-banner-btn { margin-left: auto; padding: 8px 16px; border-radius: 9px; background: var(--yellow); border: none; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 600; color: var(--charcoal); cursor: pointer; white-space: nowrap; text-decoration: none; }
+
+.alert { padding: 12px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 500; margin-bottom: 16px; }
+.alert-error { background: var(--red-light); color: #B91C1C; border: 1px solid rgba(239,68,68,0.3); }
+.alert-success { background: var(--green-light); color: #15803D; border: 1px solid rgba(34,197,94,0.3); }
+
+.job-card { background: var(--white); border-radius: 16px; border: 1px solid rgba(91,63,166,0.1); padding: 20px 22px; margin-bottom: 14px; display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: start; transition: all 0.25s; }
+.job-card:hover { border-color: var(--purple); box-shadow: 0 6px 24px rgba(91,63,166,0.1); }
+.co-logo { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: white; flex-shrink: 0; background: linear-gradient(135deg, var(--purple), var(--purple-light)); }
+.job-info .job-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.98rem; color: var(--charcoal); margin-bottom: 3px; }
+.job-info .job-company { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 10px; }
+.job-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.tag { padding: 4px 10px; border-radius: 50px; font-size: 0.72rem; font-weight: 500; }
+.tag.remote { background: var(--green-light); color: #15803D; }
+.tag.full { background: var(--purple-pale); color: var(--purple); }
+.tag.intern { background: var(--yellow-light); color: #7A5E00; }
+.tag.contract { background: var(--tan); color: #5A4A35; }
+.job-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; min-width: 140px; }
+.job-salary { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.98rem; color: var(--charcoal); }
+.job-salary-lbl { font-size: 0.72rem; color: var(--text-muted); }
+.apply-btn { padding: 9px 20px; border-radius: 9px; background: var(--purple); border: none; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; color: white; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; white-space: nowrap; text-decoration: none; }
+.apply-btn:hover { background: var(--purple-light); }
+.apply-btn.login-required { background: var(--tan-dark); color: var(--charcoal); }
+.applied-label { padding: 9px 20px; border-radius: 9px; background: var(--green-light); color: #15803D; font-size: 0.82rem; font-weight: 600; }
+
+.empty-state { text-align: center; padding: 60px 20px; }
+.empty-state h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--charcoal); margin-bottom: 8px; }
+.empty-state p { font-size: 0.88rem; color: var(--text-muted); }
+
+.fade-in { animation: fadeIn 0.4s ease both; }
+.delay-1 { animation-delay: 0.05s; } .delay-2 { animation-delay: 0.1s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a class="sidebar-logo" href="{{ url_for('home') }}">
+    <div class="logo-dot"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+    CareerBridge<span style="color:var(--purple-light)">AI</span>
+  </a>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Main</div>
+    <a class="nav-item {% if session.get('role') == 'student' %}{% else %}{% endif %}" href="{{ url_for('dashboard') }}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item active" href="{{ url_for('jobs') }}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      Job Listings
+      <span class="nav-badge">{{ jobs|length }}</span>
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Account</div>
+    <a class="nav-item" href="{{ url_for('home') }}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      Home
+    </a>
+
+    {% if session.get('role') %}
+      <a class="nav-item" href="{{ url_for('logout') }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Log Out
+      </a>
+    {% else %}
+      <a class="nav-item" href="{{ url_for('login') }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Log In
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar">
+        {{ session.get('user_name', 'GU')[:2]|upper }}
+      </div>
+      <div class="user-info">
+        <div class="name">{{ session.get('user_name', 'Guest User') }}</div>
+        <div class="role">
+          {% if session.get('role') == 'student' %}
+            Student Account
+          {% elif session.get('role') == 'recruiter' %}
+            Recruiter Account
+          {% else %}
+            Visitor
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar fade-in">
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search jobs, companies, skills..." id="searchInput" oninput="filterJobs()" />
+    </div>
+    <div class="topbar-actions">
+      <a class="btn-link" href="{{ url_for('home') }}">← Home</a>
+      {% if session.get('role') != 'student' %}
+        <a class="btn-link" href="{{ url_for('login') }}">Log In to Apply</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="body-layout">
+    <aside class="filters-panel fade-in">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;color:var(--charcoal);margin-bottom:18px;">Filters</div>
+      <div class="filter-group">
+        <div class="filter-group-title">Job Type</div>
+        <label class="checkbox-item"><input type="checkbox" checked onchange="filterJobs()" data-filter="Full Time" /><label>Full Time</label></label>
+        <label class="checkbox-item"><input type="checkbox" checked onchange="filterJobs()" data-filter="Internship" /><label>Internship</label></label>
+        <label class="checkbox-item"><input type="checkbox" checked onchange="filterJobs()" data-filter="Part Time" /><label>Part Time</label></label>
+        <label class="checkbox-item"><input type="checkbox" checked onchange="filterJobs()" data-filter="Contract" /><label>Contract</label></label>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-group">
+        <div class="filter-group-title">Location</div>
+        <label class="checkbox-item"><input type="checkbox" checked onchange="filterJobs()" data-filter-loc="Remote" /><label>Remote</label></label>
+        <label class="checkbox-item"><input type="checkbox" checked onchange="filterJobs()" data-filter-loc="Pakistan" /><label>Pakistan</label></label>
+        <label class="checkbox-item"><input type="checkbox" checked onchange="filterJobs()" data-filter-loc="China" /><label>China</label></label>
+        <label class="checkbox-item"><input type="checkbox" checked onchange="filterJobs()" data-filter-loc="USA" /><label>USA</label></label>
+      </div>
+    </aside>
+
+    <div class="jobs-area">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert {% if category == 'success' %}alert-success{% else %}alert-error{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <div class="ai-banner fade-in">
+        <div class="ai-banner-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        </div>
+        <div class="ai-banner-text">
+          <div class="t">{{ jobs|length }} live job{{ 's' if jobs|length != 1 else '' }} available right now</div>
+          <div class="s">
+            {% if session.get('role') == 'student' %}
+              You can apply directly from this page
+            {% else %}
+              Log in as a student to apply directly from this page
+            {% endif %}
+          </div>
+        </div>
+        {% if session.get('role') != 'student' %}
+          <a class="ai-banner-btn" href="{{ url_for('login') }}">Log In to Apply →</a>
+        {% endif %}
+      </div>
+
+      <div class="jobs-header-row fade-in">
+        <div class="jobs-count" id="jobsCountLabel">
+          {{ jobs|length }} Jobs <span>from database</span>
+        </div>
+      </div>
+
+      <div id="jobsList">
+        {% if jobs %}
+          {% for job in jobs %}
+          <div class="job-card fade-in" data-type="{{ job.job_type }}" data-country="{{ job.country }}">
+            <div class="co-logo">
+              {{ job.company_name[0] | upper if job.company_name else 'J' }}
+            </div>
+            <div class="job-info">
+              <div class="job-title">{{ job.job_title }}</div>
+              <div class="job-company">{{ job.company_name }} · {{ job.location }}, {{ job.country }}</div>
+              <div class="job-tags">
+                <span class="tag {% if job.job_type == 'Full Time' %}full{% elif job.job_type == 'Internship' %}intern{% elif job.job_type == 'Contract' %}contract{% else %}full{% endif %}">
+                  {{ job.job_type }}
+                </span>
+                {% if 'remote' in job.location.lower() or 'remote' in job.country.lower() %}
+                  <span class="tag remote">Remote</span>
+                {% endif %}
+              </div>
+              {% if job.description %}
+              <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.5;margin-top:4px;">
+                {{ job.description[:120] }}{% if job.description|length > 120 %}...{% endif %}
+              </div>
+              {% endif %}
+            </div>
+            <div class="job-right">
+              <div>
+                <div class="job-salary">{{ job.salary }}</div>
+                <div class="job-salary-lbl">/month</div>
+              </div>
+
+              {% if session.get('role') == 'student' %}
+                {% if job.job_id in applied_job_ids %}
+                  <div class="applied-label">Applied</div>
+                {% else %}
+                  <form method="POST" action="{{ url_for('apply_job', job_id=job.job_id) }}">
+                    <button class="apply-btn" type="submit">Apply Now</button>
+                  </form>
+                {% endif %}
+              {% else %}
+                <a class="apply-btn login-required" href="{{ url_for('login') }}">Log In to Apply</a>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">
+            <h3>No jobs posted yet</h3>
+            <p>Check back soon — recruiters are adding opportunities daily.</p>
+          </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function filterJobs() {
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  const cards = document.querySelectorAll('.job-card');
+
+  cards.forEach(card => {
+    const text = card.innerText.toLowerCase();
+    card.style.display = text.includes(query) ? 'grid' : 'none';
+  });
+}
+</script>
+</body>
+</html>

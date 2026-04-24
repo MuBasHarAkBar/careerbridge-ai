@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Recruiter Portal – CareerBridgeAI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --cream: #FAF7F2; --tan: #E8DFD0; --tan-dark: #C9B99A;
+  --purple: #5B3FA6; --purple-light: #7B5BC6; --purple-pale: #EDE8F8;
+  --yellow: #F5C842; --yellow-light: #FDF3C0;
+  --charcoal: #1E1A2E; --text-muted: #7A7087; --white: #FFFFFF;
+  --green: #22C55E; --green-light: #DCFCE7;
+  --red: #EF4444; --red-light: #FEE2E2;
+  --sidebar-w: 240px;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); display: flex; min-height: 100vh; }
+.sidebar { width: var(--sidebar-w); min-height: 100vh; background: var(--charcoal); position: fixed; left: 0; top: 0; bottom: 0; display: flex; flex-direction: column; padding: 28px 0; z-index: 50; }
+.sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 22px 28px; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.15rem; color: white; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.logo-dot { width: 26px; height: 26px; border-radius: 7px; background: var(--yellow); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.logo-dot svg { width: 14px; height: 14px; }
+.sidebar-section { padding: 22px 14px 8px; }
+.sidebar-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.3); padding: 0 8px; margin-bottom: 6px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.2s; margin-bottom: 2px; text-decoration: none; }
+.nav-item svg { width: 17px; height: 17px; flex-shrink: 0; opacity: 0.7; }
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+.nav-item.active { background: var(--yellow); color: var(--charcoal); font-weight: 500; }
+.nav-item.active svg { opacity: 1; }
+.nav-badge { margin-left: auto; background: rgba(255,255,255,0.15); color: white; border-radius: 50px; font-size: 0.68rem; font-weight: 700; padding: 2px 8px; }
+.sidebar-bottom { margin-top: auto; padding: 16px 14px; border-top: 1px solid rgba(255,255,255,0.07); }
+.user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; }
+.user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--yellow), #E8A800); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.78rem; color: var(--charcoal); flex-shrink: 0; }
+.user-info .name { font-size: 0.85rem; font-weight: 500; color: white; }
+.user-info .role { font-size: 0.73rem; color: rgba(255,255,255,0.4); }
+
+.main { margin-left: var(--sidebar-w); flex: 1; padding: 32px 36px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; gap: 20px; }
+.topbar h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--charcoal); }
+.topbar p { font-size: 0.85rem; color: var(--text-muted); margin-top: 3px; }
+.topbar-right { display: flex; gap: 10px; }
+.btn-outline { padding: 9px 18px; border-radius: 10px; border: 1.5px solid var(--tan-dark); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--charcoal); cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+.btn-outline:hover { border-color: var(--purple); color: var(--purple); }
+.btn-yellow { padding: 9px 20px; border-radius: 10px; background: var(--yellow); border: none; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600; color: var(--charcoal); cursor: pointer; transition: all 0.2s; }
+.btn-yellow:hover { background: #E8B800; transform: translateY(-1px); }
+
+.alert { padding: 12px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 500; margin-bottom: 18px; }
+.alert-error { background: var(--red-light); color: #B91C1C; border: 1px solid rgba(239,68,68,0.3); }
+.alert-success { background: var(--green-light); color: #15803D; border: 1px solid rgba(34,197,94,0.3); }
+
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 28px; }
+.stat-card { background: var(--white); border-radius: 16px; border: 1px solid rgba(91,63,166,0.1); padding: 22px 22px 18px; transition: all 0.25s; }
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(91,63,166,0.08); }
+.stat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.stat-icon svg { width: 20px; height: 20px; }
+.stat-change { font-size: 0.75rem; font-weight: 600; padding: 3px 8px; border-radius: 50px; }
+.stat-change.up { background: var(--green-light); color: #15803D; }
+.stat-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.7rem; color: var(--charcoal); margin-bottom: 4px; }
+.stat-lbl { font-size: 0.8rem; color: var(--text-muted); }
+
+.content-grid { display: grid; grid-template-columns: 1fr 320px; gap: 22px; margin-bottom: 22px; }
+.card { background: var(--white); border-radius: 16px; border: 1px solid rgba(91,63,166,0.1); padding: 24px; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: var(--charcoal); }
+.card-action { font-size: 0.8rem; color: var(--purple); font-weight: 500; cursor: pointer; text-decoration: none; }
+
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 0.78rem; font-weight: 600; color: var(--charcoal); margin-bottom: 6px; display: block; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--tan);
+  background: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--charcoal);
+  outline: none; transition: border-color 0.2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--purple); background: var(--white); }
+.form-textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.submit-btn { width: 100%; padding: 12px; border-radius: 11px; background: var(--yellow); border: none; font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--charcoal); cursor: pointer; margin-top: 4px; transition: all 0.2s; }
+.submit-btn:hover { background: #E8B800; transform: translateY(-1px); }
+
+.job-posting { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid rgba(232,223,208,0.5); }
+.job-posting:last-child { border-bottom: none; }
+.posting-icon { width: 38px; height: 38px; border-radius: 9px; background: var(--purple-pale); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.posting-icon svg { width: 18px; height: 18px; }
+.posting-info { flex: 1; min-width: 0; }
+.posting-title { font-weight: 500; font-size: 0.88rem; color: var(--charcoal); }
+.posting-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+.posting-stats { text-align: right; }
+.posting-apps { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: var(--charcoal); }
+.posting-lbl { font-size: 0.68rem; color: var(--text-muted); }
+.posting-status { padding: 3px 9px; border-radius: 50px; font-size: 0.7rem; font-weight: 600; margin-top: 3px; display: inline-block; }
+.posting-status.active { background: var(--green-light); color: #15803D; }
+
+.simple-list p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 10px; }
+
+.fade-in { animation: fadeIn 0.4s ease both; }
+.delay-1 { animation-delay: 0.05s; } .delay-2 { animation-delay: 0.1s; } .delay-3 { animation-delay: 0.15s; } .delay-4 { animation-delay: 0.2s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a class="sidebar-logo" href="{{ url_for('home') }}">
+    <div class="logo-dot"><svg viewBox="0 0 24 24" fill="none" stroke="var(--charcoal)" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+    CareerBridge<span style="color:var(--yellow)">AI</span>
+  </a>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Recruiter</div>
+    <a class="nav-item active" href="{{ url_for('recruiter') }}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" href="#job-form">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      Job Postings
+      <span class="nav-badge">{{ jobs|length }}</span>
+    </a>
+    <a class="nav-item" href="#active-jobs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Active Jobs
+      <span class="nav-badge">{{ jobs|length }}</span>
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Account</div>
+    <a class="nav-item" href="{{ url_for('home') }}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+      Home
+    </a>
+    <a class="nav-item" href="{{ url_for('logout') }}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </a>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar">HR</div>
+      <div class="user-info">
+        <div class="name">{{ user_name }}</div>
+        <div class="role">{{ company_name }}</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar fade-in">
+    <div>
+      <h1>Recruiter Dashboard</h1>
+      <p>{{ user_name }} · {{ company_name }}</p>
+    </div>
+    <div class="topbar-right">
+      <a class="btn-outline" href="{{ url_for('home') }}">Return to Home Page</a>
+      <button class="btn-yellow" onclick="document.getElementById('job-form').scrollIntoView({behavior:'smooth'});">+ Post New Job</button>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert {% if category == 'success' %}alert-success{% else %}alert-error{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="stats-grid">
+    <div class="stat-card fade-in delay-1">
+      <div class="stat-top">
+        <div class="stat-icon" style="background:var(--yellow-light)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#7A5E00" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        </div>
+        <span class="stat-change up">↑ {{ jobs|length }}</span>
+      </div>
+      <div class="stat-num">{{ jobs|length }}</div>
+      <div class="stat-lbl">Active Job Postings</div>
+    </div>
+
+    <div class="stat-card fade-in delay-2">
+      <div class="stat-top">
+        <div class="stat-icon" style="background:var(--purple-pale)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        </div>
+        <span class="stat-change up">Live</span>
+      </div>
+      <div class="stat-num">{{ jobs|length }}</div>
+      <div class="stat-lbl">Company Jobs Listed</div>
+    </div>
+
+    <div class="stat-card fade-in delay-3">
+      <div class="stat-top">
+        <div class="stat-icon" style="background:var(--green-light)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#15803D" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <span class="stat-change up">Open</span>
+      </div>
+      <div class="stat-num">{{ jobs|length }}</div>
+      <div class="stat-lbl">Published by This Recruiter</div>
+    </div>
+
+    <div class="stat-card fade-in delay-4">
+      <div class="stat-top">
+        <div class="stat-icon" style="background:var(--tan)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#5A4A35" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>
+        </div>
+        <span class="stat-change up">Ready</span>
+      </div>
+      <div class="stat-num">{{ company_name }}</div>
+      <div class="stat-lbl">Recruiter Company</div>
+    </div>
+  </div>
+
+  <div class="content-grid fade-in delay-3">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Company Jobs</span>
+        <a class="card-action" href="#active-jobs">View all →</a>
+      </div>
+
+      {% if jobs %}
+        {% for job in jobs %}
+        <div class="job-posting">
+          <div class="posting-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          </div>
+          <div class="posting-info">
+            <div class="posting-title">{{ job.job_title }}</div>
+            <div class="posting-meta">{{ job.location }}, {{ job.country }} · {{ job.job_type }}</div>
+          </div>
+          <div class="posting-stats">
+            <div class="posting-apps">{{ job.salary }}</div>
+            <div class="posting-lbl">salary</div>
+            <span class="posting-status active">Active</span>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="simple-list">
+          <p>No jobs posted yet for {{ company_name }}.</p>
+          <p>Use the job form to publish your first opening.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px;">
+      <div class="card" id="job-form">
+        <div class="card-header">
+          <span class="card-title">Post a New Job</span>
+        </div>
+
+        <form method="POST" action="{{ url_for('post_job') }}">
+          <div class="form-group">
+            <label class="form-label">Job Title</label>
+            <input type="text" name="job_title" class="form-input" placeholder="e.g. Backend Developer" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Company Name</label>
+            <input type="text" name="company_name" class="form-input" value="{{ company_name }}" readonly />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Location</label>
+              <input type="text" name="location" class="form-input" placeholder="City or Remote" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Country</label>
+              <input type="text" name="country" class="form-input" placeholder="Pakistan / China / USA" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Job Type</label>
+              <select name="job_type" class="form-select" required>
+                <option value="Full Time">Full Time</option>
+                <option value="Internship">Internship</option>
+                <option value="Contract">Contract</option>
+                <option value="Part Time">Part Time</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Salary (per month)</label>
+              <input type="text" name="salary" class="form-input" placeholder="e.g. ₨150,000 or $5,000" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-textarea" placeholder="Describe the role, responsibilities..." required></textarea>
+          </div>
+
+          <button class="submit-btn" type="submit">Publish Job Posting →</button>
+        </form>
+      </div>
+
+      <div class="card" id="active-jobs">
+        <div class="card-header">
+          <span class="card-title">Active Postings</span>
+          <a class="card-action" href="#job-form">Add More</a>
+        </div>
+
+        {% if jobs %}
+          {% for job in jobs %}
+          <div class="job-posting">
+            <div class="posting-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+            </div>
+            <div class="posting-info">
+              <div class="posting-title">{{ job.job_title }}</div>
+              <div class="posting-meta">{{ job.location }}, {{ job.country }} · {{ job.job_type }}</div>
+            </div>
+            <div class="posting-stats">
+              <div class="posting-apps">{{ job.salary }}</div>
+              <div class="posting-lbl">salary</div>
+              <span class="posting-status active">Active</span>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p style="font-size:0.88rem;color:var(--text-muted);">No jobs posted yet. Use the form above to publish your first job.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>
